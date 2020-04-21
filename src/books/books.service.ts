@@ -1,68 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Body } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Book } from './book.model';
+import { IBook } from './books.interface';
 
 
 @Injectable()
 export class BooksService {
-    books: Book[] = [];
+    books: IBook[] = [];
 
-    constructor(@InjectModel('Book') private readonly bookModel: Model<Book>){}
+    constructor(@InjectModel('Book') private readonly bookModel: Model<IBook>){}
 
-    async insertBook(title: string, description: string, price: number) {
-        const newBook = new this.bookModel({ 
-            title, 
-            description, 
-            price,
-        });
-        const result = await newBook.save();
-        return result.id as string;
+    async insertBook(@Body() body: IBook): Promise<any> {
+        return this.bookModel.create(body);
     }
-    async getBooks() {
-        const books = await this.bookModel.find().exec();
-        return books.map(book => ({
-            id: book.id,
-            title: book.title,
-            description: book.description,
-            price: book.price,
-        })) ;
+
+    getBooks() {
+        return this.bookModel.find({});
       }
     
       async getSingleBook(bookId: string) {
-        const book = await this.findBook(bookId);
-        return {
-            id: book.id,
-            title: book.title,
-            description: book.description,
-            price: book.price,
-        };
+        return await this.findBook(bookId);
       }
     
-     async updateBook(bookId: string, title: string, desc: string, price: number) {
-       const updatedBook = await this.findBook(bookId);
-
-        if (title) {
-          updatedBook.title = title;
-        }
-        if (desc) {
-          updatedBook.description = desc;
-        }
-        if (price) {
-          updatedBook.price = price;
-        }
-        updatedBook.save();
+     async updateBook(bookId: string, updatedBook: IBook) {
+       return await this.bookModel.updateOne({bookId}, updatedBook).exec();
       }
     
       async deleteBook(bookId: string) {
-        const result = await this.bookModel.deleteOne({_id: bookId}).exec();
-         if ( result.n === 0 ){
-            throw new NotFoundException('Could not find book');
-         }
+        return await this.bookModel.deleteOne({_id: bookId}).exec();  
       }
     
-      private async findBook(id: string): Promise<Book>{
+      private async findBook(id: string): Promise<IBook>{
           let book;
           try{
               book = await this.bookModel.findById(id).exec()

@@ -1,14 +1,11 @@
 import * as mongoose from 'mongoose';
 
 export const BookSchema = new mongoose.Schema({
+    blogpost:{ type: Number, required: true },
     title: { type: String, required: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true },
+    author: { type: String, required: true },
+    published: {
+        publisher: {type: String, required: true},
+        year: {type: Number, required: true},
+    },
 });
-
-export interface Book  extends mongoose.Document {
-        id: string;
-        title: string;
-        description: string;
-        price: number;
- }
