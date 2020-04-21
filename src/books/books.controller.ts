@@ -13,11 +13,11 @@ import {
 import { BooksService } from './books.service';
 import { IBook } from './books.interface';
 
-@Controller('books')
+@Controller()
 export class BooksController {
     constructor(private booksService: BooksService) {}
 
-    @Post()
+    @Post('api/books')
     async addBook(@Body() body: IBook): Promise<IBook>{
       try {
          return await this.booksService.insertBook(body);
@@ -29,22 +29,22 @@ export class BooksController {
       }
     }
 
-  @Get()
+  @Get('books')
   async getAllBooks() {
     return await this.booksService.getBooks();
   }
 
-  @Get(':id')
+  @Get('api/books:id')
   getBook(@Param('id') bookId: string) {
     return this.booksService.getSingleBook(bookId);
   }
 
-  @Patch(':id')
+  @Patch('api/books:id')
   async updateBook(@Param('id') bookId: string,@Body() body: IBook) {
     return await this.booksService.updateBook(bookId, body);
   }
 
-  @Delete(':id')
+  @Delete('api/books:id')
   async removeBook(@Param('id') bookId: string) {
      return await this.booksService.deleteBook(bookId);
   }
