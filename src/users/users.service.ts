@@ -16,7 +16,7 @@ export class UsersService {
     }
 
     getUsers() {
-        return this.userModel.find({});
+        return this.userModel.find({},{ '__v': 0 } ).exec();
       }
     
       async getSingleUser(userId: string) {

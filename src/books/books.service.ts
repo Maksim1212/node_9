@@ -16,7 +16,7 @@ export class BooksService {
     }
 
     getBooks() {
-        return this.bookModel.find({});
+        return this.bookModel.find({},{ '__v': 0 } ).exec();
       }
     
       async getSingleBook(bookId: string) {
